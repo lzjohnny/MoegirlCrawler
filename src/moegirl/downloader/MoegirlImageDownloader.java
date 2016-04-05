@@ -16,30 +16,21 @@ public class MoegirlImageDownloader {
 
 	private static final int TIMEOUT_SECONDS = 10;
 	private static final String USER_AGENT = "Mozilla/5.0 Firefox/45.0";
-	private static final String FILE_PATH = "F:\\HttpClientDownload";
+	private static final String FILE_PATH = "F:\\HttpClientDownload\\";
 
 	private CloseableHttpClient httpClient;
-
-	public static void main(String[] args) {
-		// TODO 自动生成的方法存根
-		MoegirlImageDownloader downloader = new MoegirlImageDownloader();
-		downloader.initApacheHttpClient();
-
-		// String imageUrl =
-		String imageURL = "https://img.mengniang.org/common/e/e7/Mutsu.png";
-
-		downloader.fetchContent(imageURL);
-		downloader.destoryApacheHttpClient();
-	}
-
-	private void initApacheHttpClient() {
+	
+	//图片正确下载后，imageIndex++，用于文件名
+	private static int imageIndex = 1;
+	
+	public void initApacheHttpClient() {
 		// TODO 自动生成的方法存根
 		RequestConfig config = RequestConfig.custom()
 				// .setProxy(new HttpHost(InetAddress.getLocalHost(), 10010))
 				.setSocketTimeout(TIMEOUT_SECONDS * 1000)
 				.setConnectTimeout(TIMEOUT_SECONDS * 1000).build();
 
-		/**
+		/*
 		 * HttpClients：Factory methods for CloseableHttpClient instances.
 		 * HttpClientBuilder：Builder for CloseableHttpClient instances.
 		 */
@@ -49,7 +40,7 @@ public class MoegirlImageDownloader {
 	}
 
 	// 必须保证异常发生，response和stream能正确关闭！
-	private void fetchContent(String imageURL) {
+	public void fetchContent(String imageURL) {
 		// TODO 自动生成的方法存根
 		HttpGet httpGet = new HttpGet(imageURL);
 		System.out.println("图片链接: " + httpGet.getURI());
@@ -72,11 +63,11 @@ public class MoegirlImageDownloader {
 					try {
 						inputStream = entity.getContent();
 						outputStream = new FileOutputStream(new File(FILE_PATH
-								+ "\\2.jpg"));
-
+								+ imageIndex + ".jpg"));
 						IOUtils.copy(inputStream, outputStream);
-
 						outputStream.flush();
+						
+						imageIndex++;	//文件编号+1
 					} finally {
 						outputStream.close();
 						// IOUtils.closeQuietly(outputStream);
@@ -110,7 +101,7 @@ public class MoegirlImageDownloader {
 
 	}
 
-	private void destoryApacheHttpClient() {
+	public void destoryApacheHttpClient() {
 		// TODO 自动生成的方法存根
 		try {
 			httpClient.close();
